@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "http",
+        hostname: `${process.env.WORDPRESS_HOSTNAME}`,
+        port: "",
+        pathname: "/**",
+      }
     ],
   },
   async redirects() {
