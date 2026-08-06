@@ -10,6 +10,11 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
 
+# mysqlcheck/mysqldump are required by wp-cli commands like `wp db check` (used in setup.sh)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends default-mysql-client \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy plugin and theme to staging location (volume overwrites /var/www/html)
 COPY next-revalidate /usr/src/next-revalidate
 COPY theme /usr/src/nextjs-headless
