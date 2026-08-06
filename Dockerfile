@@ -1,15 +1,16 @@
 # Stage 1: Dependencies
-# Node 22+ is required: corepack installs pnpm@latest (11.x), which depends
-# on the builtin node:sqlite module, only available since Node 22.13.
+# Node 22.13+ is required: the pinned pnpm (see packageManager in package.json)
+# depends on the builtin node:sqlite module. Corepack resolves the pinned
+# version automatically from package.json.
 FROM node:22-alpine AS deps
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Stage 2: Builder
 FROM node:22-alpine AS builder
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

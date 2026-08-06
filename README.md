@@ -55,8 +55,8 @@ Your site is now running at `http://localhost:3000`.
 
 ## Prerequisites
 
-- **Node.js** 18.17 or later
-- **pnpm** 8.0 or later (recommended) or npm/yarn
+- **Node.js** 22.13 or later
+- **pnpm** 11 (pinned via the `packageManager` field — enable with `corepack enable`)
 - **WordPress** site with REST API enabled (default in WordPress 4.7+)
 
 ## Environment Variables
