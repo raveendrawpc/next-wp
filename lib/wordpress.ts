@@ -47,10 +47,13 @@ export interface WordPressResponse<T> {
 const USER_AGENT = "Next.js WordPress Client";
 const CACHE_TTL = 3600; // 1 hour
 
+type QueryValue = string | number | boolean | undefined;
+type QueryParams = Record<string, QueryValue>;
+
 // Core fetch - throws on error (for functions that require data)
 async function wordpressFetch<T>(
   path: string,
-  query?: Record<string, any>,
+  query?: QueryParams,
   tags: string[] = ["wordpress"]
 ): Promise<T> {
   if (!baseUrl) {
@@ -79,7 +82,7 @@ async function wordpressFetch<T>(
 async function wordpressFetchGraceful<T>(
   path: string,
   fallback: T,
-  query?: Record<string, any>,
+  query?: QueryParams,
   tags: string[] = ["wordpress"]
 ): Promise<T> {
   if (!isConfigured) return fallback;
@@ -95,7 +98,7 @@ async function wordpressFetchGraceful<T>(
 // Paginated fetch - returns response with headers
 async function wordpressFetchPaginated<T>(
   path: string,
-  query?: Record<string, any>,
+  query?: QueryParams,
   tags: string[] = ["wordpress"]
 ): Promise<WordPressResponse<T>> {
   if (!baseUrl) {
@@ -129,7 +132,7 @@ async function wordpressFetchPaginated<T>(
 // Graceful paginated fetch - returns empty response when unavailable
 async function wordpressFetchPaginatedGraceful<T>(
   path: string,
-  query?: Record<string, any>,
+  query?: QueryParams,
   tags: string[] = ["wordpress"]
 ): Promise<WordPressResponse<T[]>> {
   const emptyResponse: WordPressResponse<T[]> = {
@@ -158,7 +161,7 @@ export async function getPostsPaginated(
     search?: string;
   }
 ): Promise<WordPressResponse<Post[]>> {
-  const query: Record<string, any> = {
+  const query: QueryParams = {
     _embed: true,
     per_page: perPage,
     page,
@@ -201,7 +204,7 @@ export async function getRecentPosts(filterParams?: {
   category?: string;
   search?: string;
 }): Promise<Post[]> {
-  const query: Record<string, any> = {
+  const query: QueryParams = {
     _embed: true,
     per_page: 100,
   };

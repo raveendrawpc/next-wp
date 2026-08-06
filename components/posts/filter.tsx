@@ -34,7 +34,11 @@ export function FilterPosts({
     const newParams = new URLSearchParams(window.location.search);
     newParams.delete("page");
     newParams.delete("search");
-    value === "all" ? newParams.delete(type) : newParams.set(type, value);
+    if (value === "all") {
+      newParams.delete(type);
+    } else {
+      newParams.set(type, value);
+    }
 
     router.push(`/posts?${newParams.toString()}`);
   };
