@@ -1,4 +1,9 @@
-FROM wordpress:latest
+FROM wordpress:php8.3-apache
+
+# Defensive: PHP's mod_php requires prefork MPM; upstream rebuilds have
+# intermittently shipped with multiple MPMs enabled (AH00534). Force single MPM.
+# See https://github.com/9d8dev/next-wp/issues/76
+RUN a2dismod mpm_event mpm_worker 2>/dev/null || true && a2enmod mpm_prefork
 
 # Labels for GitHub Container Registry
 LABEL org.opencontainers.image.source="https://github.com/9d8dev/next-wp"
@@ -13,7 +18,9 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 # mysqlcheck/mysqldump are required by wp-cli commands like `wp db check` (used in setup.sh)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends default-mysql-client \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /etc/mysql/conf.d \
+    && printf "[client]\nssl=0\n" > /etc/mysql/conf.d/skip-ssl.cnf
 
 # Copy plugin and theme to staging location (volume overwrites /var/www/html)
 COPY next-revalidate /usr/src/next-revalidate
